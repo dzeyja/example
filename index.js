@@ -2,13 +2,10 @@ const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
 const requestLimit = require('./middlewares/requestLimit')
-const userController = require('./controllers/usersController')
 const authRouter = require('./routes/authRoutes')
 const userRoutes = require('./routes/authRoutes')
 
 require('dotenv').config()
-const authMiddleware = require('./middlewares/authMiddleware')
-const usersController = require('./controllers/usersController')
 const app = express()
 
 app.use(cors({
