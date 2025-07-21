@@ -1,34 +1,34 @@
-const bcrypt = require('bcrypt')
 const pool = require('../config/db')
-const generateToken = require('../utilits/generateToken')
+const bcrypt = require('bcrypt')
+const generateToken = require('../utilites/generateToke')
 
 class AuthController {
     async register(req, res) {
         const { username, password } = req.body 
-        
-            if (!username || !password) {
-                return res.status(400).json({ error: 'Деректер толық енгізілмеді ' })
+
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Деректер толық енгізілмеді ' })
+        }
+
+        try {
+            // Егер username дерекқордағы username мен сәйке келсе онда қате қайтар
+            const existingUser = await pool.query('select * from users where username=$1', [username])
+
+            if (existingUser.rows.length > 0) {
+                return res.status(409).json({ error: 'Бұндай пайдаланушы бар' })
             }
-        
-            try {
-                // Егер username дерекқордағы username мен сәйке келсе онда қате қайтар
-                const existingUser = await pool.query('select * from users where username=$1', [username])
-        
-                if (existingUser.rows.length > 0) {
-                    return res.status(409).json({ error: 'Бұндай пайдаланушы бар' })
-                }
-        
-                const hashedPassword = await bcrypt.hash(password, 12)
-        
-                const result = await pool.query(
-                    'insert into users (username, password) values ($1, $2) returning id, username',
-                    [username, hashedPassword]    
-                )
-        
-                res.status(201).json({ message: 'Пайдаланушы сәтті тіркелді', user: result.rows[0] })
-            } catch(e) {
-                return res.status(500).json({ error: e.message })
-            }
+
+            const hashedPassword = await bcrypt.hash(password, 12)
+
+            const result = await pool.query(
+                'insert into users (username, password) values ($1, $2) returning id, username',
+                [username, hashedPassword]    
+            )
+
+            res.status(201).json({ message: 'Пайдаланушы сәтті тіркелді', user: result.rows[0] })
+        } catch(e) {
+            return res.status(500).json({ error: e.message })
+        }
     }
 
     async login(req, res) {

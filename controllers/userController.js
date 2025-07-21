@@ -4,12 +4,12 @@ class UserController {
     async getUsers(req, res) {
         const { sort = 'asc' } = req.query
         
-        try {
-            const result = await pool.query(`select * from users order by username ${sort}`)
-            res.status(200).json(result.rows)
-        } catch (e) {
-            return res.status(500).json({ error: e.message })
-        } 
+            try {
+                const result = await pool.query(`select * from users order by username ${sort}`)
+                res.status(200).json(result.rows)
+            } catch (e) {
+                return res.status(500).json({ error: e.message })
+            } 
     }
 
     async getUserById(req, res) {
