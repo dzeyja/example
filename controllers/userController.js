@@ -33,6 +33,24 @@ class UserController {
                 return res.status(500).json({ error: e.message })
             }
     }
+
+    async getProfile(req, res) {
+        const userId = req.user.id
+
+        try {
+            const result = await pool.query('SELECT id, username, email FROM users WHERE id = $1', [userId])
+            const user = result.rows[0]
+
+            if (!user) {
+            return res.status(404).json({ message: 'Пользователь не найден' })
+            }
+
+            res.json(user)
+        } catch (error) {
+            console.error('Ошибка при получении профиля:', error)
+            res.status(500).json({ message: 'Внутренняя ошибка сервера' })
+        }
+    }
 }
 
 module.exports = new UserController()
