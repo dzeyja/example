@@ -11,6 +11,7 @@ class PostController {
                 VALUES ($1, $2, $3)
                 RETURNING *
             `
+            
             const values = [title, content, image]
             const result = await db.query(query, values)
 
@@ -19,6 +20,16 @@ class PostController {
                 post: result.rows[0],
             })
         } catch (err) {
+            console.error(err)
+            res.status(500).json({ message: `Қате орын алды ${err.messgae}` })
+        }
+    }
+
+    async getPosts(req, res) {
+        try {
+            const result = await db.query('select * from posts')
+            res.json(result.rows)
+        } catch (e) {
             console.error(err)
             res.status(500).json({ message: `Қате орын алды ${err.messgae}` })
         }

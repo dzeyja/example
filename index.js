@@ -7,13 +7,13 @@ const postRouter = require('./routes/postRouter')
 
 require('dotenv').config()
 const app = express()
+app.use('/uploads', express.static('uploads'))
 
 app.use(cors({
     origin: 'http://localhost:5173'
 }))
 
 app.use(helmet())
-app.use('/uploads', express.static('uploads'))
 app.use(express.json())
 
 const PORT = process.env.PORT || 3002
